@@ -1,0 +1,37 @@
+substitutions:
+  _IMAGE_NAME: go-helm-cloudbuild
+  _ZONE: us-central1-c
+  _CLUSTER: cluster-1
+  _NAMESPACE: production
+
+
+steps:
+  - id: configure-kubectl
+    name: gcr.io/cloud-builders/kubectl
+    args:
+      - cluster-info
+    env:
+      - CLOUDSDK_CONTAINER_CLUSTER=${_CLUSTER}
+      - CLOUDSDK_COMPUTE_ZONE=${_ZONE}
+      - KUBECONFIG=/workspace/.kube/config
+
+  - name: gcr.io/$PROJECT_ID/helm
+    id: deploy-to-production
+    waitFor:
+      - configure-kubectl
+    args:
+      - upgrade
+      - --install
+      - ${_IMAGE_NAME}
+      - ./helm
+      - -n
+      - ${_NAMESPACE}
+      - -f
+      - ./helm/values.yaml
+      - -f
+      - ./helm/values-prod.yaml
+      - --set-string
+      - version=${COMMIT_SHA}
+    env:
+      - KUBECONFIG=/workspace/.kube/config
+      - TILLERLESS=true
