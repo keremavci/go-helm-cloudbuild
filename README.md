@@ -20,19 +20,19 @@ GitHub için gerekli izinleri verdikten sonra yine Triggers ekranında Create Tr
 ![Alt text](docs/2.jpg?raw=true "Create Cloud Build Staging Trigger ")
 
 Burada şunları belirtiyoruz;
- - Trigger'ın adı. Bizim senaryomuzda build-and-deploy-to-staging olacak.
- - Event olarak daha önce bahsettiğim gibi release branch'ine yapılacak push ile pipeline tetiklenecek. Bunuda Event bölümünde "Push to a branch" seçeneği ve Source bölümünde Branch alanına release yazarak sağlıyoruz.
- - Son olarak Build configuration bölümünde Cloud Build configuration file (yaml or json) seçeneceğini seçerek triggerımızın kullanacağı cloudbuild.yaml dosyasını gösteriyoruz.
+1. Trigger'ın adı. Bizim senaryomuzda build-and-deploy-to-staging olacak.
+2. Event olarak daha önce bahsettiğim gibi release branch'ine yapılacak push ile pipeline tetiklenecek. Bunuda Event bölümünde "Push to a branch" seçeneği ve Source bölümünde Branch alanına release yazarak sağlıyoruz.
+3. Son olarak Build configuration bölümünde Cloud Build configuration file (yaml or json) seçeneceğini seçerek triggerımızın kullanacağı cloudbuild.yaml dosyasını gösteriyoruz.
 
-Triggers ekranında Create Trigger butonuna tıklayarak cloudbuild.yaml dosyamız için ilk triggerımızı oluşturacağız.
 
+Bu triggerı oluşturduktan sonra yine aynı ekrandan cloudbuild-prod.yaml dosyamız için ilk triggerımızı oluşturacağız.
 
 ![Alt text](docs/3.jpg?raw=true "Create Cloud Build Production Trigger ")
 
 
 Burada ise  şunları belirtiyoruz,
  - Trigger'ın adı. Bizim senaryomuzda bu kez deploy-to-production olacak.
- - Event olarak ise bu sefer Push new tag seçeneceğini seçiyoruz ve Source bölümündeki Tag kısmına ^production yazıyoruz.
+ - Event olarak ise bu sefer Push new tag seçeneceğini seçiyoruz ve Source bölümündeki Tag kısmına ^production-+.* yazıyoruz.
  - Son olarak Build configuration bölümünde "Cloud Build configuration file (yaml or json)" seçeneceğini seçerek triggerımızın kullanacağı cloudbuild-production.yaml dosyasını gösteriyoruz.
 
 Bu aşamalarla Google Cloud tarafındaki tanımlamalarımız bitti.
