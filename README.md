@@ -1,4 +1,4 @@
-Herkese merhaba, bu yazıda örnek bir uygulamayı Google CloudBuild kullanarak GKE üzerinde farklı ortamlara deploy etmekten bahsedeceğim.
+Herkese merhaba, bu yazıda örnek bir uygulamayı Google Cloud Build kullanarak GKE üzerinde farklı ortamlara deploy etmekten bahsedeceğim.
 
 Yazıda ele alacağımız örnek uygulama Golang ile yazılmış ve bir tane endpoint'i olan bir REST API. Örnek uygulamayı deploy edeceğimiz ortam ise Staging ve Production namespace'leri bulunan bir Kubernetes cluster'ı.
 
@@ -9,7 +9,7 @@ Uygulamamızın deployment senaryosu şu şekilde olacak;
 
 Ben Kubernetes üzerine yapılacak deployment'larda Helm kullanmayı tercih ediyorum. Bu nedenle projede helm dizini altında çok basit bir chart oluşturdum. Burada  değişkenleri tanımladığım values.yml, values-staging.yml ve values.production.yml olarak 3 adet values dosyası mevcut. values.yml dosyasında uygulamamı deploy edeceğim tüm ortamlar için ortak olacak değerler varken values-staging.yml ve values-production.yml dosyamda ortamlara göre değişkenlik gösterecek değerler bulunuyor.
 
-Projemizde Google CloudBuild Pipeline'ının adımlarını tanımladığımız cloudbuild.yaml ve cloudbuild-production.yaml adında iki tane dosyamız var. Bu iki dosyamıza karşılık Google Cloud Console'da bulunan CloudBuild Dashboard ekranında iki tane trigger oluşturacağız.
+Projemizde Google Cloud Build Pipeline'ının adımlarını tanımladığımız cloudbuild.yaml ve cloudbuild-production.yaml adında iki tane dosyamız var. Bu iki dosyamıza karşılık Google Cloud Console'da bulunan Cloud Build Dashboard ekranında iki tane trigger oluşturacağız.
 
 Bu işlem için önce Cloud Build ekranından sol menüden Triggers'a girdikten sonra Connect Repository butonuna tıklayarak GitHub Repolarımıza erişim izni vermemiz gerekiyor.
 
@@ -17,7 +17,7 @@ Bu işlem için önce Cloud Build ekranından sol menüden Triggers'a girdikten 
 
 GitHub için gerekli izinleri verdikten sonra yine Triggers ekranında Create Trigger butonuna tıklayarak cloudbuild.yaml dosyamız için ilk triggerımızı oluşturacağız.
 
-![Alt text](docs/2.jpg?raw=true "Create CloudBuild Staging Trigger ")
+![Alt text](docs/2.jpg?raw=true "Create Cloud Build Staging Trigger ")
 
 Burada şunları belirtiyoruz;
  - Trigger'ın adı. Bizim senaryomuzda build-and-deploy-to-staging olacak.
@@ -27,7 +27,7 @@ Burada şunları belirtiyoruz;
 Triggers ekranında Create Trigger butonuna tıklayarak cloudbuild.yaml dosyamız için ilk triggerımızı oluşturacağız.
 
 
-![Alt text](docs/3.jpg?raw=true "Create CloudBuild Production Trigger ")
+![Alt text](docs/3.jpg?raw=true "Create Cloud Build Production Trigger ")
 
 
 Burada ise  şunları belirtiyoruz,
@@ -39,10 +39,10 @@ Bu aşamalarla Google Cloud tarafındaki tanımlamalarımız bitti.
 
 cloudbuild dosyalarımızı inceledeğimizde de temel olarak substitutions ve steps olarak iki bölümden oluşuyor. substitutions kısmında steps alanında çalışacak tasklarda kullanılacak değişkenleri tanımlıyoruz. steps alanında ise taskları tanımlıyoruz.
 
-CloudBuild ile çalıştığımızda dikkat etmemiz gereken bir kaç nokta var. Bunlar şu şekilde,
+Cloud Build ile çalıştığımızda dikkat etmemiz gereken bir kaç nokta var. Bunlar şu şekilde,
  - İlk olarak steps alanında tanımlanan task'lar paralel şekilde çalışıyor. Bir task'ın bir diğer task'ı beklemesi ve sonrasında çalışması için waitFor ifadesinden yararlanıyoruz.
  - Task'ların içinde substitutions alanında tanımlanan değişkenleri kullanmak için $VAR_NAME şeklinde kullanılırken task içindeki ya da taskın çalışacağı container içindeki değişkenler $$VAR_NAME şeklinde kullanılıyor. 
- - CloudBuild defaultta çalışma dizini olarak /workspace'i kullanıyor.
+ - Cloud Build defaultta çalışma dizini olarak /workspace'i kullanıyor.
 
 
 
