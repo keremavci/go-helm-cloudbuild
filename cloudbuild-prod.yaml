@@ -35,3 +35,30 @@ steps:
     env:
       - KUBECONFIG=/workspace/.kube/config
       - TILLERLESS=true
+      
+  - name: gcr.io/cloud-builders/kubectl
+    id: check-deployment
+    waitFor:
+      - deploy-to-production
+    entrypoint: bash
+    args:
+      - -c
+      - |
+        kubectl rollout status deployment/${_IMAGE_NAME}--watch --timeout=5m
+        tryCount=0
+        waitTime=1
+        while true; do
+           tryCount=$((tryCount+1))
+           sleep $waitTime
+           allPodStatus=$(kubectl get pods -l version=${COMMIT_SHA} -n ${_NAMESPACE} -o jsonpath='{..status.conditions[?(@.type=="Ready")].status}')
+           if [[ ! "$allPodStatus" == *"False"* ]]; then
+             echo "OK!"
+             break
+           elif [ $tryCount -gt 59 ]; then
+             echo "All of $1 pods cannot up in $((tryCount*waitTime)) seconds"
+             exit 1
+           fi
+        done
+    env:
+      - KUBECONFIG=/workspace/.kube/config
+      - TILLERLESS=true
