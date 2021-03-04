@@ -44,7 +44,7 @@ steps:
     args:
       - -c
       - |
-        kubectl rollout status deployment/${_IMAGE_NAME}--watch --timeout=5m
+        kubectl rollout status deployment/${_IMAGE_NAME} --watch --timeout=5m
         tryCount=0
         waitTime=1
         while true; do
